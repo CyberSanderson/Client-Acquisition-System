@@ -37,7 +37,25 @@ export function TopNav() {
         {/* Center - Title */}
         <div className="flex-1 flex justify-center lg:justify-start">
           <h1 className="text-lg font-semibold text-foreground">Dashboard</h1>
+
         </div>
+
+        {/* Right side - Notifications, Pricing, and Profile */}
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            onClick={() => router.push("/pricing")}
+            className="text-sm font-medium hover:text-primary transition"
+          >
+            Pricing
+          </Button>
+
+       
+
+          {/* Profile Dropdown */}
+          {/* ...existing avatar dropdown menu */}
+        </div>
+
 
         {/* Right side - Notifications and Profile */}
         <div className="flex items-center gap-4">
