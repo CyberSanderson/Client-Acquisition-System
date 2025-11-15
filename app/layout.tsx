@@ -3,27 +3,27 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+import AuthProvider from '@/components/AuthProvider'   // ✅ <-- add this
+
+const geist = Geist({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+})
+const geistMono = Geist_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: 'Client Acquisition System',
+  description: 'A modern dashboard for managing leads and offers',
   icons: {
     icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
+      { url: '/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
     ],
     apple: '/apple-icon.png',
   },
@@ -31,13 +31,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body className={`font-sans antialiased`}>
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${geist.variable} ${geistMono.variable} font-sans bg-background text-foreground antialiased`}
+      >
+        {/* ✅ Wrap the whole app inside supabase auth provider */}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+
         <Analytics />
       </body>
     </html>

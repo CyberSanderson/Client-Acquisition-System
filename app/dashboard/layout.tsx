@@ -1,4 +1,5 @@
-"use client"
+// app/dashboard/layout.tsx
+export const dynamic = "force-dynamic";
 
 import type { ReactNode } from "react"
 import { Sidebar } from "@/components/dashboard/sidebar"
@@ -6,17 +7,11 @@ import { TopNav } from "@/components/dashboard/top-nav"
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex h-screen bg-background">
+    <div className="min-h-screen flex bg-background text-foreground">
       <Sidebar />
-
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col">
         <TopNav />
-
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="p-6">{children}</div>
-        </main>
+        <main className="flex-1 p-6 bg-muted/10">{children}</main>
       </div>
     </div>
   )

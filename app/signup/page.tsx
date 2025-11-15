@@ -1,30 +1,71 @@
-"use client"
+'use client'
 
-import type React from "react"
-
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
-import { Target } from "lucide-react"
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Target } from 'lucide-react'
+import { supabaseBrowser } from '@/lib/supabaseBrowser'
+import { Button } from '@/components/ui/button'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 export default function SignupPage() {
-  const [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" })
+  const router = useRouter()
+  const supabase = supabaseBrowser()
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  })
+
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords don't match")
       return
     }
-    console.log("Signup:", formData)
+
+    try {
+      setLoading(true)
+
+      // ✅ Create Supabase account
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            full_name: formData.name,
+          },
+        },
+      })
+
+      if (error) {
+        console.error('❌ Signup error:', error)
+        alert(error.message)
+        return
+      }
+
+      console.log('✅ Signup success:', data)
+
+      alert('Account created! Check your email for confirmation.')
+      router.push('/login')
+    } catch (err) {
+      console.error('❌ Unexpected signup error:', err)
+      alert('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -56,6 +97,7 @@ export default function SignupPage() {
                   required
                 />
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -68,6 +110,7 @@ export default function SignupPage() {
                   required
                 />
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
@@ -80,6 +123,7 @@ export default function SignupPage() {
                   required
                 />
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirm password</Label>
                 <Input
@@ -92,8 +136,9 @@ export default function SignupPage() {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">
-                Create account
+
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? 'Creating...' : 'Create account'}
               </Button>
             </form>
 

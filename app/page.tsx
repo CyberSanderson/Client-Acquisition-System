@@ -1,9 +1,21 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowRight, BarChart3, Zap, Users, Target } from "lucide-react"
+import { supabaseServer } from "@/lib/supabaseServer"
+import { redirect } from "next/navigation"
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  // ✅ Check login status server-side
+  const supabase = supabaseServer()
+  const { data } = await supabase.auth.getUser()
+
+  if (data.user) {
+    redirect("/dashboard")
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -34,8 +46,8 @@ export default function LandingPage() {
               Acquire Clients with Confidence
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-balance">
-              Streamline your client acquisition process with our intelligent lead management system. Track offers,
-              manage leads, and grow your business faster.
+              Streamline your client acquisition process with our intelligent lead management system.
+              Track offers, manage leads, and grow your business faster.
             </p>
           </div>
           <div className="flex items-center justify-center gap-4">
@@ -104,7 +116,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <Card className="bg-primary text-primary-foreground border-0">
           <CardContent className="pt-12 pb-12 text-center space-y-6">

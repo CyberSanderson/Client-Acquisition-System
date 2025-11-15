@@ -1,73 +1,90 @@
-"use client"
+'use client'
 
-import type React from "react"
-
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Target, ArrowRight } from "lucide-react"
+import type React from 'react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { supabaseBrowser } from '@/lib/supabaseBrowser'
+import { Target } from 'lucide-react'
 
 export default function SignupPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    company: "",
-  })
-
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Mock signup - redirect to dashboard
-    window.location.href = "/dashboard"
-  }
+  const router = useRouter()
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' })
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }))
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords don't match")
+      return
+    }
+
+    setIsLoading(true)
+    const supabase = supabaseBrowser()
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: { full_name: formData.name },
+          emailRedirectTo: `${window.location.origin}/login`, // after confirming email
+        },
+      })
+
+      if (error) {
+        console.error('❌ Signup error:', error)
+        setError(error.message)
+      } else {
+        console.log('✅ Signup success:', data)
+        alert('Account created successfully! Please check your email to confirm your account.')
+        router.push('/login')
+      }
+    } catch (err: any) {
+      console.error('Unexpected signup error:', err)
+      setError(err.message || 'Something went wrong.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-md space-y-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 w-fit">
+        <div className="flex items-center justify-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <Target className="w-5 h-5 text-primary-foreground" />
           </div>
-          <span className="text-lg font-bold text-foreground">Client Acquisition</span>
-        </Link>
+          <span className="text-xl font-bold text-foreground">Client Acquisition</span>
+        </div>
 
-        {/* Card */}
+        {/* Signup Card */}
         <Card>
           <CardHeader>
-            <CardTitle>Create your account</CardTitle>
-            <CardDescription>Join thousands of businesses growing with us</CardDescription>
+            <CardTitle className="text-center">Create your account</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSignup} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">Full name</Label>
                 <Input
                   id="name"
                   name="name"
                   placeholder="John Doe"
                   value={formData.name}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="company">Company Name</Label>
-                <Input
-                  id="company"
-                  name="company"
-                  placeholder="Your Company"
-                  value={formData.company}
                   onChange={handleChange}
                   required
                 />
@@ -96,17 +113,32 @@ export default function SignupPage() {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full gap-2">
-                Create account <ArrowRight className="w-4 h-4" />
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm password</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? 'Creating account...' : 'Create account'}
               </Button>
             </form>
 
-            <p className="text-sm text-muted-foreground text-center mt-6">
-              Already have an account?{" "}
+            <div className="mt-4 text-center text-sm">
+              <span className="text-muted-foreground">Already have an account? </span>
               <Link href="/login" className="text-primary hover:underline font-medium">
                 Sign in
               </Link>
-            </p>
+            </div>
           </CardContent>
         </Card>
       </div>

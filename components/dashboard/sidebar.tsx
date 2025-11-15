@@ -1,10 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { LayoutDashboard, Target, Users, Settings, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { supabaseBrowser } from "@/lib/supabaseBrowser"
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
@@ -15,6 +16,13 @@ const menuItems = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const supabase = supabaseBrowser()
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push("/login")
+  }
 
   return (
     <aside className="w-64 bg-sidebar border-r border-sidebar-border flex flex-col">
@@ -33,6 +41,7 @@ export function Sidebar() {
         {menuItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href
+
           return (
             <Link key={item.href} href={item.href}>
               <Button
@@ -52,7 +61,11 @@ export function Sidebar() {
 
       {/* Logout button */}
       <div className="p-4 border-t border-sidebar-border">
-        <Button variant="ghost" className="w-full justify-start gap-3 text-destructive hover:bg-destructive/10">
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3 text-destructive hover:bg-destructive/10"
+          onClick={handleLogout}
+        >
           <LogOut className="w-5 h-5" />
           Logout
         </Button>
@@ -60,3 +73,4 @@ export function Sidebar() {
     </aside>
   )
 }
+
