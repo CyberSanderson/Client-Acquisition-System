@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { supabaseBrowser } from "@/lib/supabaseBrowser"
 
+
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: Target, label: "Offers", href: "/dashboard/offers" },
@@ -25,7 +26,8 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="w-64 bg-sidebar border-r border-sidebar-border flex flex-col">
+    <aside className="hidden lg:flex w-64 bg-sidebar border-r border-sidebar-border flex-col">
+
       {/* Logo area */}
       <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center gap-2">
