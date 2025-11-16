@@ -5,11 +5,12 @@ const pricingTiers = [
     id: "starter",
     name: "Starter",
     price: "$19/mo",
-    description: "Perfect for solo entrepreneurs starting out.",
+    description: "Perfect for solo pros who are ready to scale.",
     features: [
-      "Up to 3 clients",
+      "Up to 500 clients",
       "Basic lead capture",
       "Offer management",
+      "Automated reminders",
       "Email support",
     ],
     buttonLabel: "Get Started",
@@ -19,11 +20,12 @@ const pricingTiers = [
     id: "pro",
     name: "Pro",
     price: "$49/mo",
-    description: "Best for growing service providers.",
+    description: "Best for growing service providers who want automation.",
     features: [
       "Unlimited clients",
+      "Advanced client pipelines",
       "Automated follow-up sequences",
-      "Advanced offer management",
+      "Smart offer delivery",
       "Priority support",
     ],
     highlighted: true,
@@ -34,11 +36,12 @@ const pricingTiers = [
     id: "agency",
     name: "Agency",
     price: "$99/mo",
-    description: "For agencies needing multiple team accounts.",
+    description: "For agencies managing multiple brands or team members.",
     features: [
       "Team accounts",
-      "Client dashboards",
+      "Multi-brand / multi-client dashboard",
       "White-label branding",
+      "Unlimited automations",
       "Premium support",
     ],
     buttonLabel: "Book Demo",
@@ -85,3 +88,4 @@ export default function PricingPage() {
     </div>
   )
 }
+
