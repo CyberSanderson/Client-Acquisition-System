@@ -9,9 +9,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <Sidebar />
 
       {/* Main Area */}
-      <div className="flex-1 flex flex-col">
+      {/*
+        FIX: Added 'min-w-0' here.
+        This tells the flex-1 container that it's allowed to shrink,
+        which prevents its children (like your charts) from overflowing
+        their containers.
+      */}
+      <div className="flex-1 flex flex-col min-w-0">
         <TopNav />
-        <main className="p-4 lg:p-6 w-full overflow-x-hidden">
+        <main className="p-4 lg:p-6 w-full overflow-y-auto">
           {children}
         </main>
       </div>
