@@ -17,7 +17,11 @@ import {
   Cell,
 } from "recharts";
 import { TrendingUp, Users, Target, DollarSign } from "lucide-react";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
 import { AddOfferDialog } from "@/components/offers/add-offer-dialog";
 import { OffersTable } from "@/components/offers/offers-table";
@@ -62,11 +66,14 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="px-4 py-8 max-w-7xl mx-auto space-y-10">
+    // FIX: Added responsive horizontal padding for better spacing on all devices
+    <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto space-y-10">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Welcome back!</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
+            Welcome back!
+          </h2>
           <p className="text-muted-foreground mt-1">
             Here&apos;s what’s happening with your business
           </p>
@@ -94,7 +101,9 @@ export default function DashboardPage() {
                   <div className="space-y-1">
                     <p className="text-sm text-muted-foreground">{metric.title}</p>
                     <p className="text-xl md:text-2xl font-bold">{metric.value}</p>
-                    <p className="text-xs text-green-600 dark:text-green-400">{metric.change}</p>
+                    <p className="text-xs text-green-600 dark:text-green-400">
+                      {metric.change}
+                    </p>
                   </div>
                   <div className="p-2 bg-accent/10 rounded-lg">
                     <Icon className="w-6 h-6 text-accent" />
@@ -128,8 +137,17 @@ export default function DashboardPage() {
                   <YAxis />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
-                  <Line type="monotone" dataKey="revenue" stroke="var(--color-revenue)" />
-                  <Line type="monotone" dataKey="target" stroke="var(--color-target)" strokeDasharray="5 5" />
+                  <Line
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="var(--color-revenue)"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="target"
+                    stroke="var(--color-target)"
+                    strokeDasharray="5 5"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </ChartContainer>
@@ -146,7 +164,10 @@ export default function DashboardPage() {
               config={{
                 converted: { label: "Converted", color: "hsl(var(--chart-1))" },
                 progress: { label: "In Progress", color: "hsl(var(--chart-2))" },
-                notConverted: { label: "Not Converted", color: "hsl(var(--chart-3))" },
+                notConverted: {
+                  label: "Not Converted",
+                  color: "hsl(var(--chart-3))",
+                },
               }}
               className="h-[250px] sm:h-[300px]"
             >
@@ -156,15 +177,21 @@ export default function DashboardPage() {
                     data={conversionData}
                     cx="50%"
                     cy="50%"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    // FIX: Removed the 'label' prop to prevent overlapping text on mobile
+                    labelLine={false} // FIX: Removed the line pointing to the label
                     outerRadius="80%"
                     dataKey="value"
                   >
                     {conversionData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
                     ))}
                   </Pie>
                   <ChartTooltip content={<ChartTooltipContent />} />
+                  {/* FIX: Added a Legend to display labels clearly below the chart */}
+                  <Legend />
                 </PieChart>
               </ResponsiveContainer>
             </ChartContainer>
@@ -209,7 +236,15 @@ export default function DashboardPage() {
             <CardTitle>Your Offers</CardTitle>
           </CardHeader>
           <CardContent>
-            <OffersTable key={refreshKey} />
+            {/*
+              FIX: Added a wrapper div with 'overflow-x-auto'.
+              This makes the table scrollable horizontally on small screens
+              without breaking the entire page layout. This is the
+              most important fix for responsive tables.
+            */}
+            <div className="overflow-x-auto">
+              <OffersTable key={refreshKey} />
+            </div>
           </CardContent>
         </Card>
       </div>
