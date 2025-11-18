@@ -124,3 +124,6 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* 🛠 Fixed: Removed invalid selector
+   If needed later, style .recharts-dot using a safer class */
